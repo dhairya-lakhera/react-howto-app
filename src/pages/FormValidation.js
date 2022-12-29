@@ -1,10 +1,13 @@
 import { useRef, useState } from "react";
 import "./css/FormSample.css";
 
-function SubmitFormWithoutAPI() {
+function FormValidation() {
   let [name, setName] = useState("");
+  let [isNameValidTouched, setNameTouched] = useState(false);
   let [phone, setPhone] = useState("");
+  let [isPhoneValidTouched, setPhoneTouched] = useState(false);
   let [email, setEmail] = useState("");
+  let [isEmailValidTouched, setEmailTouched] = useState(false);
   let [gender, setGender] = useState("");
   let [documents, setDocuments] = useState({
     aadhar: false,
@@ -12,13 +15,43 @@ function SubmitFormWithoutAPI() {
     voterId: false,
   });
 
+  let isNameValid = name.trim() !== "";
+  const nameInputIsInvalid = !isNameValid && isNameValidTouched;
+  let isPhoneValid = phone.trim() !== "" && phone.match(/^\d{10}$/);
+  const phoneInputIsInvalid = !isPhoneValid && isPhoneValidTouched;
+  let isEmailValid = email.trim() !== "" && email.match(/^\S+@\S+\.\S+$/);
+  const emailInputIsInvalid = !isEmailValid && isEmailValidTouched;
+  let isGenderValid = gender.trim() !== "";
+
+  let isDocumentsValid =
+    documents.aadhar === true ||
+    documents.panCard === true ||
+    documents.voterId === true;
+
+  const formBtnClassName =
+    isNameValid &&
+    isPhoneValid &&
+    isEmailValid &&
+    isGenderValid &&
+    isDocumentsValid
+      ? "btnEnabled"
+      : "btnDisabled";
+
   const submitForm = (e) => {
     e.preventDefault();
-    console.log("name is " + name);
-    console.log("phone is " + phone);
-    console.log("email is " + email);
-    console.log("gender is " + gender);
-    console.log(documents);
+    if (
+      isNameValid &&
+      isPhoneValid &&
+      isEmailValid &&
+      isGenderValid &&
+      isDocumentsValid
+    ) {
+      console.log("name is " + name);
+      console.log("phone is " + phone);
+      console.log("email is " + email);
+      console.log("gender is " + gender);
+      console.log(documents);
+    }
   };
 
   return (
@@ -26,7 +59,7 @@ function SubmitFormWithoutAPI() {
       <div>Back</div>
       <div>
         <div className="wrapper">
-          <h1>Example of Submit Form Without API</h1>
+          <h1>Example of Form Validation</h1>
           <form action="" method="post" onSubmit={submitForm}>
             <div className="form-group">
               <label htmlFor="">Name</label>
@@ -34,7 +67,13 @@ function SubmitFormWithoutAPI() {
                 type="text"
                 placeholder="Full Name"
                 onChange={(e) => setName(e.target.value)}
+                onBlur={() => setNameTouched(true)}
               />
+              {nameInputIsInvalid && (
+                <label className="erorr" htmlFor="">
+                  Please fill name
+                </label>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="">Phone</label>
@@ -42,7 +81,13 @@ function SubmitFormWithoutAPI() {
                 type="text"
                 placeholder="Phone"
                 onChange={(e) => setPhone(e.target.value)}
+                onBlur={() => setPhoneTouched(true)}
               />
+              {phoneInputIsInvalid && (
+                <label className="erorr" htmlFor="">
+                  Please enter a valid phone number
+                </label>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="">Email</label>
@@ -50,7 +95,13 @@ function SubmitFormWithoutAPI() {
                 type="text"
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setEmailTouched(true)}
               />
+              {emailInputIsInvalid && (
+                <label className="erorr" htmlFor="">
+                  Please enter a valid email
+                </label>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="">Gender</label>
@@ -104,9 +155,14 @@ function SubmitFormWithoutAPI() {
                 />
                 <span>Voter Id</span>
               </div>
+              {/* {!isDocumentsValid && (
+                <label className="erorr" htmlFor="">
+                  Atleast one document need to be checked
+                </label>
+              )} */}
             </div>
             <div className="form-group">
-              <button className="btn" type="submit">
+              <button className={formBtnClassName} type="submit">
                 Save
               </button>
             </div>
@@ -117,4 +173,4 @@ function SubmitFormWithoutAPI() {
   );
 }
 
-export default SubmitFormWithoutAPI;
+export default FormValidation;
